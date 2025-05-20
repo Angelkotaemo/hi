@@ -1,0 +1,227 @@
+* {
+  margin-bottom: 2px;
+  margin-left: 1px;
+  margin-right: 1px;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'verdana', sans-serif;
+}
+
+
+/* navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between; 
+  align-items: center;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  padding: 10px 20px;
+  
+  background-color: #d49f91;
+  padding: 10px 20px;
+  z-index: 1000; /* to ensure it stays on top */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.navbar .website-name {
+  font-size: 20px;
+  font-weight: bold;
+  color: #fbf8b9;
+}
+
+/* nav links */
+.nav-links {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  gap: 15px;
+  margin-left: auto;
+}
+
+.nav-links li {
+  display: inline;
+  margin: 0 15px;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #f9e8ce;
+  padding: 5px 10px;
+  transition: color 0.3s, background-color 0.3s;
+  border-radius: 5px;
+}
+
+.active {
+  background-color: #cf8572;
+  font-weight: bold;
+  
+}
+
+.nav-links a:hover {
+  background-color: #f9e8ce;
+  color: #856d4d;
+}
+
+/* responsive menu toggle */
+.menu-toggle {
+  display: none;
+  flex-direction: column;
+  cursor: pointer;
+  gap: 5px;
+  margin-left: auto;
+}
+
+.menu-toggle span {
+  background-color: #fbf8b9;
+  height: 3px;
+  width: 25px;
+  border-radius: 2px;
+}
+
+/* responsive styles */
+@media (max-width: 768px) {
+  .nav-links {
+    display: none;
+    flex-direction: column;
+    background-color: #333333;
+    width: 100%;
+    position: absolute;
+    top: 60px;
+    left: 0;
+    padding: 10px 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  }
+
+  .nav-links.show {
+    display: flex;
+  }
+
+  .menu-toggle {
+    display: flex;
+  }
+}
+
+
+body {
+  background: #FAE3D9;
+  padding-top: 60px;
+  margin-right: 5px;
+  color: #6B4226;
+}
+
+.club-info {
+  display: flex;
+  align-items: center;
+  gap: 15px; 
+  margin: 15px 0;
+}
+
+.club-info img {
+  flex-shrink: 0;
+  margin-left: 26px;
+}
+
+.club-info p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.triviagham {
+  display: flex;
+  align-items: center;
+  justify-content: center; 
+  gap: 15px; 
+  margin: 15px 0;
+}
+
+.triviagham img {
+  flex-shrink: 0;
+  margin-left: 0;
+}
+
+.triviagham h4 {
+  margin: 0;
+  line-height: 40px;
+  background-color: #d49f91;
+  border-radius: 10px;
+  padding: 0;
+  
+  width: 200px;
+  height: 40px;
+  
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center; 
+}
+
+.triviagham a {
+  text-decoration: none;
+  color: inherit; /* Keeps the color of the link consistent with the text */
+}
+
+.triviagham a:hover {
+  background-color: #d49f91;
+  color: #f6ec28;
+  border-radius: 10px;
+}
+
+section.aboutus {
+  border-width: 2px;
+  border-style: dashed;
+  border-radius: 5px;
+  border-color: #f9e8ce;
+}
+
+div.creator {
+  margin-left: 40px;
+  display: block;
+}
+
+h2.abtus {
+  margin-left: 20px;
+  color: #F9E8CE;
+  border-bottom: 1px solid #cccccc;
+}
+
+img.angel {
+  float: left;
+}
+
+img.audrey {
+  float: left;
+}
+
+/* footer */
+footer {
+  width: 100%;
+  color: black;
+  padding: 10px;
+  text-align: center;
+  border-radius: 5px;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #cccccc;
+}
+
+.content {
+  display: flex;
+  align-items: center;
+  max-width: 800px; /* Optional: limits the width */
+}
+
+.angel, .audrey {
+  margin-right: 20px;
+}
+
+.text {
+  flex: 1; /* Makes the text take up remaining space */
+}
