@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta name="author" content="BELEPENDIO, Angel Jasper N. and CATSUELA, Riane Audrey T.">
+  <meta name="description" content="">
+  <meta name="keywords" content="PSHS-MC, CS3, Q2 Project">
+  <title>The Official PSHC-MC Freshie Hub</title>
+  <link href="style.css" rel="stylesheet" type="text/css" />
+  <link rel="icon" href="" type="images/ico" sizes="16x16"> <!-- to add a site tab icon -->
+  <link rel="icon" href="https://cdn.glitch.global/02652b7d-1f49-4cb2-83be-f5bf03380b55/favicon%20(2).ico?v=1738746840855" type="image/ico" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .calendar-container {
+      text-align: center;
+    }
+
+    .month-navigation {
+      margin-bottom: 10px;
+    }
+
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 5px;
+      margin: auto;
+    }
+
+    .day {
+      padding: 20px;
+      height: 120px;
+      background-color: white;
+      border: 1px solid #ddd;
+      text-align: left;
+      cursor: pointer;
+      overflow-y: auto;
+    }
+
+    .day-number {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .schedule-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 2px 0;
+    }
+
+    .delete-btn {
+      background-color: #ff4444;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      padding: 0 4px;
+      cursor: pointer;
+      font-size: 10px;
+    }
+    
+    .day-header {
+      max-width: 300%;
+      padding: 15px;
+      background-color: #ffad99;
+      color: white;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .empty {
+      background-color: #f9f9f9;
+    }
+
+    .buttons {
+      margin-top: 10px;
+    }
+
+    .button {
+      padding: 10px;
+      margin: 5px;
+      background-color: #ffad99;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    .button:hover {
+      background-color: #ff9980;
+    }
+
+    .search-container {
+      margin-top: 10px;
+    }
+
+    .search-container select,
+    .search-container input {
+      padding: 8px;
+      margin: 0 5px;
+    }
+
+    #year-input {
+      width: 80px;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+    }
+
+    .modal-content {
+      background-color: white;
+      margin: 15% auto;
+      padding: 20px;
+      width: 300px;
+      border-radius: 5px;
+    }
+
+    .close {
+      float: right;
+      cursor: pointer;
+      font-size: 20px;
+    }
+  </style>
+    
+</head>
+  
+<body>
+  <nav class="navbar">
+    
+    <div class="website-name">Iskolar Lifestyle</div>
+    <div class="menu-toggle">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a class="active" href="2acad_cal">Academic Calendar</a></li>
+      <li><a href="3map">Map</a></li>
+      <li><a href="4a_clubs">Clubs</a></li>
+      <li><a href="5mini_games">Mini Games</a></li>
+      <li><a href="6about_us">About Us</a></li>
+      <li><a href="8profile">Profile</a></li>
+  </ul>
+  </nav>
+  
+  <div class="calendar-container">
+  <h1 id="month-title"></h1>
+  <div class="month-navigation">
+    <button class="button" onclick="prevMonth()">&#9665; Previous</button>
+    <button class="button" onclick="nextMonth()">Next &#9655;</button>
+    <div class="search-container">
+      <select id="month-select">
+        <option value="0">January</option>
+        <option value="1">February</option>
+        <option value="2">March</option>
+        <option value="3">April</option>
+        <option value="4">May</option>
+        <option value="5">June</option>
+        <option value="6">July</option>
+        <option value="7">August</option>
+        <option value="8">September</option>
+        <option value="9">October</option>
+        <option value="10">November</option>
+        <option value="11">December</option>
+      </select>
+      <input type="number" id="year-input" placeholder="Year" min="1900" max="2100">
+      <button class="button" onclick="jumpToDate()">Go</button>
+    </div>
+  </div>
+  <div class="calendar" id="calendar"></div>
+  <button class="button" onclick="resetCalendar()">Reset</button>
+</div>
+
+<div id="myModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <p>Enter schedule for <span id="selectedDate"></span>:</p>
+    <textarea id="scheduleInput"></textarea>
+    <button onclick="saveSchedule()">Save</button>
+  </div>
+</div>
+
+<script>
+const monthNames = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"
+];
+
+let currentMonth = new Date().getMonth();
+let currentYear = new Date().getFullYear();
+let schedules = {};
+
+// load saved schedules from localStorage
+const savedSchedules = localStorage.getItem("calendarSchedules");
+if (savedSchedules) {
+  schedules = JSON.parse(savedSchedules);
+}
+
+function generateCalendar(month, year) {
+  document.getElementById("month-title").innerText = `${monthNames[month]} ${year}`;
+  const calendar = document.getElementById("calendar");
+  calendar.innerHTML = "";
+
+  const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  daysOfWeek.forEach(day => {
+    const header = document.createElement("div");
+    header.classList.add("day-header");
+    header.innerText = day;
+    calendar.appendChild(header);
+  });
+
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+  for (let i = 0; i < firstDay; i++) {
+    const emptyDiv = document.createElement("div");
+    emptyDiv.classList.add("day", "empty");
+    calendar.appendChild(emptyDiv);
+  }
+
+  for (let i = 1; i <= daysInMonth; i++) {
+    const dayDiv = document.createElement("div");
+    dayDiv.classList.add("day");
+    const dayNumber = document.createElement("div");
+    dayNumber.classList.add("day-number");
+    dayNumber.innerText = i;
+    dayDiv.appendChild(dayNumber);
+
+    const dateString = `${year}-${month + 1}-${i < 10 ? '0' + i : i}`;
+    if (schedules[dateString]) {
+      schedules[dateString].forEach((item, index) => {
+        const scheduleItem = document.createElement("div");
+        scheduleItem.classList.add("schedule-item");
+
+        const itemText = document.createElement("span");
+        itemText.innerText = item;
+
+        const deleteBtn = document.createElement("button");
+        deleteBtn.innerText = "×";
+        deleteBtn.classList.add("delete-btn");
+        deleteBtn.onclick = (e) => {
+          e.stopPropagation();
+          schedules[dateString].splice(index, 1);
+          if (schedules[dateString].length === 0) {
+            delete schedules[dateString];
+          }
+          localStorage.setItem("calendarSchedules", JSON.stringify(schedules));
+          generateCalendar(currentMonth, currentYear);
+        };
+
+        scheduleItem.appendChild(itemText);
+        scheduleItem.appendChild(deleteBtn);
+        dayDiv.appendChild(scheduleItem);
+      });
+    }
+
+    dayDiv.addEventListener('click', () => openModal(dateString));
+    calendar.appendChild(dayDiv);
+  }
+}
+
+function nextMonth() {
+  currentMonth = (currentMonth + 1) % 12;
+  if (currentMonth === 0) currentYear++;
+  generateCalendar(currentMonth, currentYear);
+}
+
+function prevMonth() {
+  currentMonth = (currentMonth - 1 + 12) % 12;
+  if (currentMonth === 11) currentYear--;
+  generateCalendar(currentMonth, currentYear);
+}
+
+function resetCalendar() {
+  currentMonth = new Date().getMonth();
+  currentYear = new Date().getFullYear();
+  generateCalendar(currentMonth, currentYear);
+}
+
+function jumpToDate() {
+  const monthSelect = document.getElementById("month-select");
+  const yearInput = document.getElementById("year-input");
+
+  const selectedMonth = parseInt(monthSelect.value);
+  const selectedYear = parseInt(yearInput.value);
+
+  if (selectedYear >= 1900 && selectedYear <= 2100) {
+    currentMonth = selectedMonth;
+    currentYear = selectedYear;
+    generateCalendar(currentMonth, currentYear);
+  } else {
+    alert("Please enter a year between 1900 and 2100");
+  }
+}
+
+function openModal(dateString) {
+  document.getElementById("selectedDate").innerText = dateString;
+  document.getElementById("myModal").style.display = "block";
+}
+
+function saveSchedule() {
+  const dateString = document.getElementById("selectedDate").innerText;
+  const scheduleInput = document.getElementById("scheduleInput").value;
+
+  if (!schedules[dateString]) schedules[dateString] = [];
+  schedules[dateString].push(scheduleInput);
+
+  // save to localStorage
+  localStorage.setItem("calendarSchedules", JSON.stringify(schedules));
+
+  document.getElementById("scheduleInput").value = "";
+  document.getElementById("myModal").style.display = "none";
+  generateCalendar(currentMonth, currentYear);
+}
+
+// modal logic
+var modal = document.getElementById("myModal");
+var span = document.getElementsByClassName("close")[0];
+span.onclick = function () {
+  modal.style.display = "none";
+}
+window.onclick = function (event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
+
+// generate calendar on page load
+generateCalendar(currentMonth, currentYear);
+</script>
+
+  
+  <script src="script.js"></script>  
+</body>
+  
+  <p>
+    Stay on top of your academic schedule! Refer to the important school events listed below.
+  </p>
+  
+  <footer>
+  &copy; A. Belependio and A. Catsuela (Batch 2028 9-Strontium) 
+  </footer>
+</html>
